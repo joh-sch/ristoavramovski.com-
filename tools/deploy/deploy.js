@@ -89,7 +89,11 @@ function ssh(cfg, script, { capture = false } = {}) {
 }
 
 function local(command, options = {}) {
-  return execSync(command, { cwd: ROOT, encoding: 'utf8', ...options }).trim();
+  const out = execSync(command, { cwd: ROOT, encoding: 'utf8', ...options });
+
+  // execSync returns null when stdio is inherited, because nothing is
+  // captured — so this cannot assume a string.
+  return typeof out === 'string' ? out.trim() : '';
 }
 
 // ─── preflight ───────────────────────────────────────────────────────────────
