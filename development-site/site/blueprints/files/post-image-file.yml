@@ -1,0 +1,18 @@
+title: Post Image
+
+accept:
+  mime:
+    - image/jpeg
+    - image/png
+    - image/gif
+    - image/webp
+    - image/avif
+    - image/heic
+    - image/heif
+  maxsize: 26214400
+
+fields:
+  alt:
+    type: text
+    label: Alt text
+    help: Describes the image for screen readers and when it fails to load.

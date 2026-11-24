@@ -1,0 +1,25 @@
+Title: Reference one
+
+----
+
+Url: https://example.org/reference-one
+
+----
+
+Text: 
+
+----
+
+Date: 2026-11-23 09:10:00
+
+----
+
+Sortkey: 20261123091200
+
+----
+
+Size: m
+
+----
+
+Uuid: rc5sq0gzgrhbnlu7

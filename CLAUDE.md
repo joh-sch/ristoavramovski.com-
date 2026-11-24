@@ -64,5 +64,21 @@ tools/release/           ← optional GitHub release automation
 - **ESLint stays on 9.x and Babel on 7.x.** `@rollup/plugin-eslint` peers on
   `eslint ^8.57 || ^9`, and `@rollup/plugin-babel@6` peers on `@babel/core ^7`.
   Upgrading either major breaks the build.
+- **The stream's `num` discipline is load-bearing.** Posts are ordered and
+  paginated by `num` (the folder number), which Kirby reads from the directory
+  name without opening a file. Never sort or filter the whole post collection
+  by a content field: benchmarked at 1,856 ms vs 56 ms for 20k posts.
+  Cross-cutting queries belong in the feed index, not `->filterBy()`.
+  See `docs/PLAN.md` §1.3 and `site/plugins/stream/src/Feed.php`.
+- **`num` comes from the stored `sortkey` field, not from the date.** The
+  blueprints deliberately use `num: "{{ page.sortkey }}"`. Writing
+  `{{ page.date.toDate('YmdHis') }}` looks equivalent but silently breaks:
+  this project sets `date.handler: intl`, where `toDate()` takes an ICU
+  pattern and `m` means *minute*, yielding `2026452018` instead of
+  `20261120184500`. `Risto\Stream\Stream::num()` is the single definition.
+- **HEIC never reaches the thumb pipeline.** `Kirby\Image\Image::$resizableTypes`
+  excludes `heic`/`heif`, so uploads are converted to AVIF on arrival. Requires
+  the `imagick` PHP extension in production; this dev machine falls back to GD,
+  which can write AVIF but cannot read HEIC.
 - **Never commit** generated assets, `vendor/`, `storage/`, `media/`, or
   `config.localhost.php`.

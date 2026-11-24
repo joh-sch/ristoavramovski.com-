@@ -1,0 +1,5 @@
+name: Admin
+title: Admin
+description: Full access.
+
+permissions: true

@@ -1,0 +1,139 @@
+<?php
+
+/**
+ * Local development seeder.
+ *
+ * Creates the artist test account and fills the stream with posts.
+ *
+ *   php tools/dev/seed-stream.php            # test account + 7 sample posts
+ *   php tools/dev/seed-stream.php 10000      # test account + N generated posts
+ *   php tools/dev/seed-stream.php --reset    # wipe all posts first
+ *
+ * Never run this against production content.
+ */
+
+$root = dirname(__DIR__, 2) . '/development-site';
+require $root . '/vendor/autoload.php';
+
+use Risto\Stream\Stream;
+
+$kirby = new Kirby([
+    'roots' => [
+        'index'    => $root,
+        'storage'  => $root . '/storage',
+        'accounts' => $root . '/storage/accounts',
+        'cache'    => $root . '/storage/cache',
+        'sessions' => $root . '/storage/sessions',
+    ],
+]);
+$kirby->impersonate('kirby');
+
+$args  = array_slice($argv, 1);
+$reset = in_array('--reset', $args, true);
+$count = (int) (array_values(array_filter($args, 'ctype_digit'))[0] ?? 0);
+
+// ── reset ───────────────────────────────────────────────────────────────────
+
+if ($reset === true) {
+    foreach (Stream::buckets() as $bucket) {
+        $bucket->delete(true);
+        echo "  - removed bucket {$bucket->slug()}\n";
+    }
+}
+
+// ── test account ────────────────────────────────────────────────────────────
+
+const TEST_EMAIL    = 'artist@risto.test';
+const TEST_PASSWORD = 'stream-test-2026';
+
+if ($kirby->user(TEST_EMAIL) === null) {
+    $user = $kirby->users()->create([
+        'email'    => TEST_EMAIL,
+        'password' => TEST_PASSWORD,
+        'role'     => 'artist',
+        'name'     => 'Test Artist',
+        'language' => 'en',
+    ]);
+    echo "  + user {$user->email()} / " . TEST_PASSWORD . " (role: artist)\n";
+} else {
+    echo "  = user " . TEST_EMAIL . " already exists\n";
+}
+
+// ── helpers ─────────────────────────────────────────────────────────────────
+
+function bucketFor(DateTimeImmutable $date): Kirby\Cms\Page
+{
+    $slug   = Stream::bucketSlug($date);
+    $bucket = page(Stream::ROOT_ID . '/' . $slug);
+
+    if ($bucket === null) {
+        $bucket = page(Stream::ROOT_ID)->createChild([
+            'slug'     => $slug,
+            'template' => 'stream-year',
+            'content'  => ['title' => $slug],
+        ])->changeStatus('unlisted');
+        echo "  + bucket {$slug}\n";
+    }
+
+    return $bucket;
+}
+
+function makePost(DateTimeImmutable $date, string $template, array $fields): void
+{
+    $bucket = bucketFor($date);
+    $slug   = 'post-' . $date->format('YmdHis');
+
+    if (page($bucket->id() . '/' . $slug) !== null) {
+        return;
+    }
+
+    $bucket->createChild([
+        'slug'     => $slug,
+        'template' => $template,
+        'content'  => $fields + [
+            'date'    => $date->format('Y-m-d H:i:s'),
+            'sortkey' => Stream::num($date),
+            'size'    => 'm',
+        ],
+    ])->changeStatus('listed');
+}
+
+// ── sample content ──────────────────────────────────────────────────────────
+
+if ($count === 0) {
+    $samples = [
+        ['2026-11-24 14:30:00', 'post-text', ['title' => 'On repetition',   'text' => 'Thinking about repetition as a form of attention.']],
+        ['2026-11-23 09:12:00', 'post-link', ['title' => 'Reference one',   'url'  => 'https://example.org/reference-one']],
+        ['2026-11-20 18:45:00', 'post-text', ['title' => 'Unfinished',      'text' => 'A note left unfinished on purpose.']],
+        ['2026-10-02 11:00:00', 'post-text', ['title' => 'Colour studies',  'text' => 'Colour studies, late afternoon.']],
+        ['2026-08-14 16:20:00', 'post-link', ['title' => 'Reference two',   'url'  => 'https://example.org/reference-two']],
+        ['2025-12-30 10:05:00', 'post-text', ['title' => 'Last of the year','text' => 'Last entry of the year.']],
+        ['2025-06-11 08:00:00', 'post-text', ['title' => 'Early summer',    'text' => 'Early summer, nothing resolved.']],
+    ];
+
+    foreach ($samples as [$when, $template, $fields]) {
+        makePost(new DateTimeImmutable($when), $template, $fields);
+    }
+
+    echo "  + " . count($samples) . " sample posts\n";
+    exit(0);
+}
+
+// ── bulk generation (load testing) ──────────────────────────────────────────
+
+$start = new DateTimeImmutable('2020-01-01 09:00:00');
+
+for ($i = 0; $i < $count; $i++) {
+    $date = $start->add(new DateInterval('PT' . ($i * 3) . 'H'));
+
+    makePost($date, 'post-text', [
+        'title' => 'Post ' . $i,
+        'text'  => 'Generated post ' . $i . '. ' . str_repeat('lorem ipsum dolor sit amet ', 12),
+    ]);
+
+    if ($i > 0 && $i % 500 === 0) {
+        echo "  … {$i}/{$count}\n";
+    }
+}
+
+echo "  + {$count} generated posts\n";

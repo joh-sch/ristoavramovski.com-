@@ -1,0 +1,20 @@
+title: "{{ page.title }}"
+icon: calendar
+
+options:
+  changeSlug: false
+  changeTemplate: false
+  delete: false
+  preview: false
+
+sections:
+  posts:
+    type: pages
+    label: Posts
+    layout: cards
+    info: "{{ page.date.toDate('d.m.Y H:i') }}"
+    sortBy: num desc
+    templates:
+      - post-image
+      - post-text
+      - post-link

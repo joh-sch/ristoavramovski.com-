@@ -35,12 +35,30 @@ return [
 
     // ── Images ───────────────────────────────────────────────────────────────
 
+    // Kirby's `im` (ImageMagick CLI) driver is deprecated as of Kirby 5.1 —
+    // `imagick` (the PHP extension) is the supported one. Fall back to GD
+    // where the extension is missing, so a dev machine without it still works.
+    // HEIC input requires imagick + libheif; see the stream plugin's image
+    // handling and docs/PLAN.md §1.4.
     'thumbs' => [
-        'quality'  => 80,
+        'driver'    => extension_loaded('imagick') ? 'imagick' : 'gd',
+        'quality'   => 72,
         'interlace' => true,
-        // Uncomment to serve WebP everywhere — requires GD or ImageMagick
-        // with WebP support on the target server.
-        // 'format' => 'webp',
+
+        // AVIF measured at ~113ms/thumb and ~2.5x smaller than JPEG on this
+        // machine. Thumbs are pre-generated on upload, so the encode cost is
+        // paid once and never by a visitor. Payload size is what matters on
+        // an endlessly scrolling feed.
+        //
+        // Browser support is ~97% (Chrome 85+, Firefox 93+, Safari 16.4+).
+        // Set to 'webp' to trade ~50% more bytes for universal support.
+        'format'    => 'avif',
+
+        'srcsets' => [
+            // Widths used by feed tiles. Keep in sync with the masonry
+            // breakpoints in app.css.
+            'tile' => [400, 800, 1200, 1600],
+        ],
     ],
 
     // ── Caching ──────────────────────────────────────────────────────────────
@@ -57,6 +75,36 @@ return [
     'risto' => [
         // Injects the livereload client into the footer. Local only.
         'livereload' => false,
+
+        'stream' => [
+            // Posts fetched per feed page. Benchmarked: 30 posts costs ~41ms
+            // of content reads at 20k total posts (docs/PLAN.md §1.3).
+            'perPage' => 30,
+
+            // Year bucket that new posts are filed into. Kept as an option so
+            // the bucketing strategy can change without touching callers.
+            'bucketFormat' => 'Y',
+
+            // Uploads. Enforced server-side in the blueprint `accept` rule and
+            // re-checked in the upload route; the client hint is cosmetic.
+            'uploads' => [
+                'maxSize'    => 25 * 1024 * 1024,
+                'extensions' => ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'heic', 'heif'],
+            ],
+
+            // HEIC/HEIF cannot pass through Kirby's thumb pipeline at all
+            // (not in Image::$resizableTypes), so it is converted on upload.
+            'convert' => [
+                'from'    => ['heic', 'heif'],
+                'to'      => 'avif',
+                'quality' => 82,
+
+                // Keep the untouched upload alongside the converted file.
+                // An artist's archive should not be destroyed by a format
+                // decision made at upload time.
+                'keepOriginal' => true,
+            ],
+        ],
     ],
 
 ];

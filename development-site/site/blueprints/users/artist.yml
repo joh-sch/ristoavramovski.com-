@@ -1,0 +1,42 @@
+name: Artist
+title: Artist
+description: Can post to the stream and manage their own posts.
+
+permissions:
+  access:
+    panel: true
+    site: true
+    users: false
+    system: false
+  pages:
+    create: true
+    delete: true
+    update: true
+    changeSlug: false
+    changeTemplate: false
+  files:
+    create: true
+    delete: true
+    update: true
+  site:
+    update: false
+  user:
+    update: true
+    changePassword: true
+  users:
+    create: false
+    delete: false
+    update: false
+
+columns:
+  - width: 1/1
+    sections:
+      info:
+        type: fields
+        fields:
+          info:
+            type: info
+            label: Posting
+            text: |
+              Posts are added from the front page using the + button.
+              This panel is for editing or removing existing posts.

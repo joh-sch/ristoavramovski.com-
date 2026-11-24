@@ -1,0 +1,6 @@
+type: date
+label: Posted
+time: true
+default: now
+required: true
+help: Drives the folder number used for ordering. Changing it re-sorts the post.

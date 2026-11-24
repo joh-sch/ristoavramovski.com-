@@ -1,0 +1,21 @@
+Title: Unfinished
+
+----
+
+Text: A note left unfinished on purpose.
+
+----
+
+Date: 2026-11-20 18:45:00
+
+----
+
+Sortkey: 20261120184500
+
+----
+
+Size: m
+
+----
+
+Uuid: 9hobjmekoeahkg5d

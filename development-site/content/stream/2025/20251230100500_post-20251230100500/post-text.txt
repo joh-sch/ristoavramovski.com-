@@ -1,0 +1,21 @@
+Title: Last of the year
+
+----
+
+Text: Last entry of the year.
+
+----
+
+Date: 2025-12-30 10:05:00
+
+----
+
+Sortkey: 20251230100500
+
+----
+
+Size: m
+
+----
+
+Uuid: syocrerqpmyjwhlc

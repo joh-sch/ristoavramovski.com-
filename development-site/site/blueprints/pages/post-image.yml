@@ -1,0 +1,52 @@
+title: Image Post
+icon: image
+
+# Folder sort number, as YYYYMMDDHHMMSS.
+#
+# Reads the stored `sortkey` field rather than formatting the date here.
+# `{{ page.date.toDate('YmdHis') }}` looks equivalent but is NOT: with
+# `date.handler: intl` (which this project uses) toDate() takes an ICU
+# pattern, where `m` means minute and `s` is unrelated to seconds — it
+# silently yields 2026452018 instead of 20261120184500.
+#
+# Risto\Stream\Stream::num() is the single definition. Do not inline it here.
+num: "{{ page.sortkey }}"
+
+options:
+  changeTemplate: false
+  preview: false
+
+columns:
+  - width: 2/3
+    sections:
+      content:
+        type: fields
+        fields:
+          caption:
+            type: textarea
+            label: Caption
+            size: small
+            buttons: [bold, italic, link]
+      media:
+        type: files
+        label: Image
+        template: post-image-file
+        layout: cards
+        max: 1
+
+  - width: 1/3
+    sections:
+      meta:
+        type: fields
+        fields:
+          date: fields/post-date
+          sortkey:
+            type: hidden
+          size:
+            type: select
+            label: Tile size
+            default: m
+            options:
+              s: Small
+              m: Medium
+              l: Large
