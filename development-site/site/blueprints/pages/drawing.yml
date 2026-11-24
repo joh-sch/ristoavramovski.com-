@@ -1,0 +1,29 @@
+title: Drawing layer
+icon: edit
+
+options:
+  changeSlug: false
+  changeStatus: false
+  changeTemplate: false
+  delete: false
+  preview: false
+
+sections:
+  info:
+    type: fields
+    fields:
+      note:
+        type: info
+        label: System page
+        text: |
+          Holds the drawing layer. Edited from the front page with the pencil
+          tool, not here. `json` is Fabric's serialisation; `svg` is the flat
+          render inlined for visitors.
+      width:
+        type: number
+        label: Authored width
+        disabled: true
+      height:
+        type: number
+        label: Authored height
+        disabled: true

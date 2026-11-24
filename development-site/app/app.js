@@ -6,6 +6,7 @@ import StreamControls from '../site/snippets/stream-controls/js/stream-controls.
 import PostComposer from '../site/snippets/post-composer/js/post-composer.js';
 import StreamFeed from '../site/snippets/stream-feed/js/stream-feed.js';
 import ThemeControls from '../site/snippets/theme-controls/js/theme-controls.js';
+import DrawControls from '../site/snippets/draw-controls/js/draw-controls.js';
 // create-comp inserts new imports here
 
 const components = {
@@ -13,6 +14,7 @@ const components = {
   'PostComposer': PostComposer,
   'StreamFeed': StreamFeed,
   'ThemeControls': ThemeControls,
+  'DrawControls': DrawControls,
   // create-comp inserts new registrations here
 };
 

@@ -33,6 +33,7 @@ const CONFIG_PATH = path.join(__dirname, 'deploy.config.json');
  */
 const ASSETS = [
   'development-site/app/app.min.js',
+  'development-site/app/drawing.min.js',
   'development-site/app/styles/styles.css',
 ];
 
@@ -220,7 +221,13 @@ function deploy(cfg) {
              development-site/storage/cache \
              development-site/storage/sessions \
              development-site/media \
-             development-site/content/stream
+             development-site/content/stream \
+             development-site/content/drawing
+
+    # Seed the drawing page only if absent — it holds the artist's drawing and
+    # must survive every deploy.
+    [ -f development-site/content/drawing/drawing.txt ] || \
+      printf 'Title: Drawing\n' > development-site/content/drawing/drawing.txt
 
     echo "→ clearing caches"
     rm -rf development-site/storage/cache/* || true

@@ -6,6 +6,7 @@ use Risto\Stream\Stream;
 
 // Paths are relative: load() resolves them against the base dir argument.
 load([
+    'Risto\\Stream\\Drawing' => 'src/Drawing.php',
     'Risto\\Stream\\Feed'   => 'src/Feed.php',
     'Risto\\Stream\\Images' => 'src/Images.php',
     'Risto\\Stream\\Posts'  => 'src/Posts.php',

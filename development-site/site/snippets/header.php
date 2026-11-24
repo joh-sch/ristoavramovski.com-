@@ -61,4 +61,8 @@ $metaDescription = $page->description()->or($site->description());
   <div id="chrome">
     <?php if (($showControls ?? true) === true) snippet('stream-controls/stream-controls') ?>
     <?php snippet('theme-controls/theme-controls') ?>
+    <?php snippet('draw-controls/draw-controls') ?>
   </div>
+
+  <?php // The saved drawing, flat SVG. Visible to everyone, costs no JS. ?>
+  <?php snippet('drawing-layer/drawing-layer') ?>

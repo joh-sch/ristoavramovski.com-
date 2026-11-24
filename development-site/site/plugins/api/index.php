@@ -1,11 +1,13 @@
 <?php
 
 use Kirby\Cms\App as Kirby;
+use Risto\Api\DrawingRoutes;
 use Risto\Api\FeedRoutes;
 use Risto\Api\PostRoutes;
 use Risto\Api\Session;
 
 load([
+    'Risto\\Api\\DrawingRoutes' => 'src/DrawingRoutes.php',
     'Risto\\Api\\FeedRoutes' => 'src/FeedRoutes.php',
     'Risto\\Api\\PostRoutes' => 'src/PostRoutes.php',
     'Risto\\Api\\Respond'    => 'src/Respond.php',
@@ -57,6 +59,18 @@ Kirby::plugin('risto/api', [
             'pattern' => '_api/feed',
             'method'  => 'GET',
             'action'  => fn () => FeedRoutes::page(),
+        ],
+
+        [
+            'pattern' => '_api/drawing',
+            'method'  => 'GET',
+            'action'  => fn () => DrawingRoutes::show(),
+        ],
+
+        [
+            'pattern' => '_api/drawing',
+            'method'  => 'POST',
+            'action'  => fn () => DrawingRoutes::update(),
         ],
 
     ],

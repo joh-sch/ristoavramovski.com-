@@ -351,3 +351,113 @@ html.is-animating .transition-fade {
 .stream-controls__login {
   display: contents;
 }
+
+/* ── Drawing ──────────────────────────────────────────────────────────── */
+
+/*
+ * The saved layer. Spans the document, sits above the feed but below the
+ * fixed chrome, and never intercepts clicks — it is a picture, not a surface.
+ */
+.drawing-layer {
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 5;
+  pointer-events: none;
+  aspect-ratio: var(--drawing-ar);
+}
+
+.drawing-layer svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* The live editing surface, only present while the tool is open. */
+.drawing-canvas-mount {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 6;
+}
+
+.is-drawing {
+  /* Makes it obvious the page is in a different mode. */
+  cursor: crosshair;
+}
+
+.is-drawing .canvas-container {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+}
+
+.draw-controls {
+  position: fixed;
+  left: 1rem;
+  bottom: 1rem;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.draw-controls__toggle {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid currentColor;
+  background: var(--color-paper);
+  color: inherit;
+  font-size: 1.125rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.draw-controls__toggle[aria-pressed='true'] {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+.draw-controls__panel {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid currentColor;
+  background: var(--color-paper);
+  min-width: 13rem;
+}
+
+.draw-controls__panel[hidden] { display: none; }
+
+.draw-controls__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.draw-controls__actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+
+.draw-controls__button {
+  border: 1px solid currentColor;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.8125rem;
+  padding: 0.15rem 0.5rem;
+  cursor: pointer;
+}
+
+.draw-controls__status {
+  margin: 0;
+  font-size: 0.8125rem;
+  opacity: 0.7;
+  min-height: 1em;
+}

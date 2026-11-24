@@ -146,5 +146,12 @@ tools/release/           ← optional GitHub release automation
   overlapped tiles by exactly the caption height. `lazy-img` already puts the
   server-known dimensions on the `<img>`, so the browser reserves correct
   space before load and a single batched measurement pass is exact.
+- **Fabric is a second, on-demand bundle.** ~292KB against a 55KB app bundle,
+  and only the artist draws. Saved drawings are inlined as sanitised SVG, so
+  visitors render them with no JS; `app/drawing.js` is fetched only when the
+  pencil tool is first opened. `rollup.config.mjs` emits both bundles.
+- **Drawing SVG is sanitised on write, never on read.** It is echoed into
+  every visitor's page unescaped, so `Drawing::sanitiseSvg()` strips script,
+  foreignObject, use, event handlers and non-fragment hrefs before storage.
 - **Never commit** generated assets, `vendor/`, `storage/`, `media/`, or
   `config.localhost.php`.
