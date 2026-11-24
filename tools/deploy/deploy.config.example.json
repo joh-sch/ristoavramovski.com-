@@ -1,0 +1,11 @@
+{
+  "host": "user@example-server.com",
+  "port": 22,
+  "path": "/var/www/stream.example.com",
+  "branch": "main",
+  "url": "https://stream.example.com",
+  "remote": "origin",
+  "php": "php",
+  "composer": "composer",
+  "npm": "npm"
+}

@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * Production / test-server configuration.
+ *
+ * Copy to config.<hostname>.php on the server, where <hostname> is the domain
+ * without port — e.g. config.stream.example.com.php. Kirby loads it by
+ * matching the request host, and merges it over config.php.
+ *
+ * Gitignored: it describes one environment and lives on that environment.
+ */
+
+return [
+
+    // Never on a public server: it turns Kirby's error pages into stack
+    // traces, and makes Auth reveal why a login failed.
+    'debug' => false,
+
+    'panel' => [
+        // Switch to true only to create the first account, then back to false.
+        'install' => false,
+    ],
+
+    // Anonymous visitors get cached HTML; the artist never does, because a
+    // session cookie makes the response private. See docs/PLAN.md §1.1.
+    'cache' => [
+        'pages' => [
+            'active' => true,
+        ],
+    ],
+
+    'risto' => [
+        'livereload' => false,
+    ],
+
+];

@@ -1,9 +1,0 @@
-Alt: Overlapping coloured shapes
-
-----
-
-Uuid: y6tqlcry2mumno7k
-
-----
-
-Template: post-image-file

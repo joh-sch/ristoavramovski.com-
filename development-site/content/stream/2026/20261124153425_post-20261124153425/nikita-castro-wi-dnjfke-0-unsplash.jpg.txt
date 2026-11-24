@@ -1,9 +1,0 @@
-Alt: 
-
-----
-
-Uuid: ah1ni6f4dxrilrhw
-
-----
-
-Template: post-image-file
