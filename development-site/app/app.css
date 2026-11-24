@@ -347,3 +347,7 @@ html.is-animating .transition-fade {
   text-align: right;
   cursor: pointer;
 }
+
+.stream-controls__login {
+  display: contents;
+}

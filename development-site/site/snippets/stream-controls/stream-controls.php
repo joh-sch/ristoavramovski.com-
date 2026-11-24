@@ -1,38 +1,38 @@
 <?php
 
 /**
- * The + button and its dialogs.
+ * The top-right controls.
  *
- * Two states:
- *   - logged out → + links to /login, upgraded by JS into a login dialog
- *   - logged in  → + opens the composer, plus a logout control
+ * Logged out → login component (+ links to /login, upgraded to a dialog)
+ * Logged in  → composer component, plus a logout form
  *
- * Calling $kirby->user() here is load-bearing beyond the branch: it is what
- * marks the response as cookie-dependent, so Kirby serves cached HTML to
- * anonymous visitors and always re-renders for the artist. See docs/PLAN.md §1.1.
+ * ── Component nesting ───────────────────────────────────────────────────
+ * The outer div is a PLAIN layout wrapper with no g-component on it, and the
+ * two components below are siblings. That is deliberate: gia resolves refs by
+ * querying every [g-ref] descendant of a component's element, without
+ * stopping at nested components. Nesting one component inside another makes
+ * the outer one adopt the inner one's refs — which silently bound this
+ * component's login handler to the composer's form and posted empty
+ * credentials to /_api/session on every new post.
+ *
+ * Calling $kirby->user() here is load-bearing for caching, not just the view:
+ * it marks the response cookie-dependent, so anonymous visitors get cached
+ * HTML and the artist always gets a fresh render. See docs/PLAN.md §1.1.
  *
  * The CSRF token is only embedded in the logged-in branch. That render is
  * private and never cached, so it is safe there — whereas embedding it in the
  * anonymous branch would start a session for every visitor and disable the
- * page cache outright. Logged-out, the token is fetched when the dialog opens.
+ * page cache outright. Logged out, the token is fetched when the dialog opens.
  */
 
 $user = $kirby->user();
 
 ?>
 
-<div
-  g-component="StreamControls"
-  g-options  ='<?= json_encode((object) [
-      'tokenUrl'  => url('_api/session/token'),
-      'loginUrl'  => url('_api/session'),
-      'authed'    => $user !== null,
-  ]) ?>'
-  class      ="stream-controls">
+<div class="stream-controls">
 
   <?php if ($user): ?>
 
-    <?php // Owns its own + button; see snippets/post-composer/. ?>
     <?php snippet('post-composer/post-composer') ?>
 
     <form
@@ -47,55 +47,65 @@ $user = $kirby->user();
 
   <?php else: ?>
 
-    <?php
-      // data-no-swup is required, not decorative: Swup's click handler is
-      // delegated on document and does not check event.defaultPrevented, so
-      // calling preventDefault() in the component is not enough to stop it
-      // navigating to /login behind the open dialog.
-    ?>
-    <a
-      href="<?= url('login') ?>"
-      g-ref="add"
-      data-no-swup
-      class="stream-controls__add"
-      aria-haspopup="dialog"
-      aria-label="Log in to add a post">+</a>
+    <div
+      g-component="StreamControls"
+      g-options  ='<?= json_encode((object) [
+          'tokenUrl' => url('_api/session/token'),
+          'loginUrl' => url('_api/session'),
+      ]) ?>'
+      class      ="stream-controls__login">
 
-    <dialog g-ref="dialog" class="stream-controls__dialog" aria-label="Log in">
-      <form
-        method="post"
-        action="<?= url('_api/session') ?>"
-        g-ref="form"
-        class="stream-controls__form">
+      <?php
+        // data-no-swup is required, not decorative: Swup's click handler is
+        // delegated on document and does not check event.defaultPrevented, so
+        // calling preventDefault() in the component is not enough to stop it
+        // navigating to /login behind the open dialog.
+      ?>
+      <a
+        href="<?= url('login') ?>"
+        g-ref="add"
+        data-no-swup
+        class="stream-controls__add"
+        aria-haspopup="dialog"
+        aria-label="Log in to add a post">+</a>
 
-        <?php // Filled by JS on open; see the note at the top of this file. ?>
-        <input type="hidden" name="csrf" g-ref="csrf" value="">
+      <dialog g-ref="dialog" class="stream-controls__dialog" aria-label="Log in">
+        <form
+          method="post"
+          action="<?= url('_api/session') ?>"
+          g-ref="form"
+          class="stream-controls__form">
 
-        <label class="stream-controls__label" for="stream-login-email">Email</label>
-        <input
-          type="email"
-          id="stream-login-email"
-          name="email"
-          g-ref="email"
-          autocomplete="username"
-          required>
+          <?php // Filled by JS on open; see the note at the top of this file. ?>
+          <input type="hidden" name="csrf" g-ref="csrf" value="">
 
-        <label class="stream-controls__label" for="stream-login-password">Password</label>
-        <input
-          type="password"
-          id="stream-login-password"
-          name="password"
-          autocomplete="current-password"
-          required>
+          <label class="stream-controls__label" for="stream-login-email">Email</label>
+          <input
+            type="email"
+            id="stream-login-email"
+            name="email"
+            g-ref="email"
+            autocomplete="username"
+            required>
 
-        <p g-ref="error" class="stream-controls__error" role="alert" hidden></p>
+          <label class="stream-controls__label" for="stream-login-password">Password</label>
+          <input
+            type="password"
+            id="stream-login-password"
+            name="password"
+            autocomplete="current-password"
+            required>
 
-        <div class="stream-controls__actions">
-          <button type="button" g-ref="cancel" class="stream-controls__cancel">Cancel</button>
-          <button type="submit" g-ref="submit">Log in</button>
-        </div>
-      </form>
-    </dialog>
+          <p g-ref="error" class="stream-controls__error" role="alert" hidden></p>
+
+          <div class="stream-controls__actions">
+            <button type="button" g-ref="cancel" class="stream-controls__cancel">Cancel</button>
+            <button type="submit" g-ref="submit">Log in</button>
+          </div>
+        </form>
+      </dialog>
+
+    </div>
 
   <?php endif ?>
 

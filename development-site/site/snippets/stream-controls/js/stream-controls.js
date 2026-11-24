@@ -43,11 +43,12 @@ export default class StreamControls extends Component {
     // the options object but is never passed. Neither gia's loadComponents()
     // nor @swup/gia-plugin forwards it, so it is always undefined, and
     // touching a property on it throws before the component can mount.
+    // Only ever mounted in the logged-out state — the markup drops the
+    // g-component attribute entirely once there is a user.
     this.options = {
       name: 'StreamControls',
       tokenUrl: '',
       loginUrl: '',
-      authed: false,
       logs: false,
     };
 

@@ -85,6 +85,14 @@ tools/release/           ← optional GitHub release automation
   element's `g-options` attribute over your defaults. The constructor's second
   argument is never passed by `loadComponents()` or `@swup/gia-plugin`, so
   reading it throws and the component silently never mounts.
+- **Never nest one gia component inside another.** gia resolves refs by
+  querying every `[g-ref]` descendant of a component's element and does not
+  stop at nested components, so the outer component silently adopts the inner
+  one's refs. This bound the login component's submit handler to the
+  composer's form, firing a phantom `POST /_api/session` with empty
+  credentials on every new post — visible as "Please enter an email address
+  and password" flashing before the post succeeded. Keep components as
+  siblings inside a plain layout wrapper.
 - **Persistent chrome mounts separately from page content.** Anything outside
   `#swup` (the `+` button, dialogs) is invisible to `SwupGiaPlugin`. `app.js`
   mounts `#chrome` with `loadComponents(components, chrome)`; everything inside
