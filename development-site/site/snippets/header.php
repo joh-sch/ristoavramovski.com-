@@ -34,3 +34,12 @@ $metaDescription = $page->description()->or($site->description());
   <?= css('app/styles/styles.css?v=' . RISTO_2026_VERSION) ?>
 </head>
 <body data-page="<?= esc($page->id(), 'attr') ?>">
+
+  <?php
+    // Persistent chrome: everything here lives OUTSIDE #swup, so it survives
+    // page transitions — and so SwupGiaPlugin never sees it. app.js mounts
+    // this subtree separately. Global components belong in here.
+  ?>
+  <div id="chrome">
+    <?php if (($showControls ?? true) === true) snippet('stream-controls/stream-controls') ?>
+  </div>

@@ -24,13 +24,19 @@ import Component from "gia/Component";
 ///// Assets /////
 //////////////////
 
-// Options with case-sensitive keys that are not to be
-// automatically extracted from the options arg. but be
-// assigned to an option key manually to preserve its case
-// (Kirby CMS converts all fields/option keys to lowercase)
-// (see constructor).
-
-const manualOptionKeys = ["optionkey"];
+// NOTE ON OPTIONS (gia 1.0.1)
+//
+// `this.options = {...}` is a SETTER on gia's BaseComponent. Assigning to it
+// reads the element's g-options attribute and merges it over the defaults you
+// pass. That is how values reach the component.
+//
+// The constructor's second argument looks like the same thing but is NOT:
+// neither gia's loadComponents() nor @swup/gia-plugin ever passes it, so it
+// is always undefined. Reading a property off it throws before the component
+// can mount, and the failure is silent — the component simply never works.
+//
+// Declare defaults for every key you expect from g-options, so the shape is
+// visible here even when the attribute is absent.
 
 //  Default values for manually extracted options
 //  (see constructor, in case specific option has not been provided
@@ -59,7 +65,7 @@ export default class NewComp extends Component {
   /////////// Constructor ////////////
   ////////////////////////////////////
 
-  constructor(el, options) {
+  constructor(el) {
     super(el);
 
     //// DOM references ////
@@ -72,14 +78,10 @@ export default class NewComp extends Component {
     /////// Options ////////
     ////////////////////////
 
-    // Get options not to be manually extracted from the options arg...
-    const autoOptions = {};
-    for (const key in options) if (!manualOptionKeys.includes(key)) autoOptions[key] = options[key];
-
+    // Merged with the element's g-options — see the note above.
     this.options = {
       name: "NewComp",
-      // optionKey: options.optionkey,
-      ...autoOptions,
+      // someOption: "default",
       logs: false,
       logStyles: defaultLogStyles,
     };

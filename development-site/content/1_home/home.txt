@@ -6,6 +6,8 @@ Description:
 
 ----
 
-Text:
+Text: Foundation ready. Replace this with project content.
 
-Foundation ready. Replace this with project content.
+----
+
+Uuid: 82fkjynizlgdkt2k

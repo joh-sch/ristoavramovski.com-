@@ -72,3 +72,75 @@ html.is-animating .transition-fade {
     transition: none;
   }
 }
+
+/* ── Stream controls ──────────────────────────────────────────────────── */
+
+.stream-controls {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.stream-controls__add {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid currentColor;
+  background: var(--color-paper);
+  color: inherit;
+  font-size: 1.5rem;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.stream-controls__logout-button,
+.stream-controls__cancel {
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.stream-controls__dialog {
+  border: 1px solid currentColor;
+  padding: 1.5rem;
+  background: var(--color-paper);
+  color: inherit;
+  min-width: min(22rem, 90vw);
+}
+
+.stream-controls__dialog::backdrop {
+  background: rgb(0 0 0 / 0.35);
+}
+
+.stream-controls__form,
+.login-form {
+  display: grid;
+  gap: 0.5rem;
+  max-width: 22rem;
+}
+
+.stream-controls__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.stream-controls__error,
+.login-form__error {
+  margin: 0;
+  color: #b00020;
+}
+
+.login-form {
+  margin-top: 1.5rem;
+}

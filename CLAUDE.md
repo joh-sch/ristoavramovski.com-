@@ -80,5 +80,26 @@ tools/release/           ← optional GitHub release automation
   excludes `heic`/`heif`, so uploads are converted to AVIF on arrival. Requires
   the `imagick` PHP extension in production; this dev machine falls back to GD,
   which can write AVIF but cannot read HEIC.
+- **gia components get options from `g-options`, not the constructor.**
+  `this.options = {...}` is a setter on gia's `BaseComponent` that merges the
+  element's `g-options` attribute over your defaults. The constructor's second
+  argument is never passed by `loadComponents()` or `@swup/gia-plugin`, so
+  reading it throws and the component silently never mounts.
+- **Persistent chrome mounts separately from page content.** Anything outside
+  `#swup` (the `+` button, dialogs) is invisible to `SwupGiaPlugin`. `app.js`
+  mounts `#chrome` with `loadComponents(components, chrome)`; everything inside
+  `#swup` is mounted and unmounted per navigation. Global UI goes in `#chrome`.
+- **Swup ignores `event.defaultPrevented`.** Its click handler is delegated on
+  `document`, so a component calling `preventDefault()` does not stop a
+  navigation. Links that JS handles need `data-no-swup`.
+- **Never put a CSRF token in a cacheable page.** `csrf()` starts a session,
+  and a session cookie makes every later response private — measured to drop
+  the home page from cached to uncached outright. The logged-out login form
+  fetches its token from `/_api/session/token` when the dialog opens; only the
+  logged-in render (already private) embeds one directly.
+- **Login errors must come from `auth()->isBlocked()`, not the exception.**
+  With `debug` off, `Auth::validatePassword()` discards the specific error and
+  rethrows a generic `PermissionException`, so rate-limiting is undetectable
+  from the caught exception in production.
 - **Never commit** generated assets, `vendor/`, `storage/`, `media/`, or
   `config.localhost.php`.

@@ -1,0 +1,20 @@
+title: Log in
+icon: lock
+
+options:
+  changeSlug: false
+  changeStatus: false
+  changeTemplate: false
+  delete: false
+  update: false
+
+sections:
+  info:
+    type: fields
+    fields:
+      note:
+        type: info
+        label: System page
+        text: |
+          The no-JavaScript login fallback. The + button on the front page
+          normally opens a dialog instead. This page has no editable content.
