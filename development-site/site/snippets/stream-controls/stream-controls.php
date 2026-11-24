@@ -32,12 +32,8 @@ $user = $kirby->user();
 
   <?php if ($user): ?>
 
-    <button
-      type="button"
-      g-ref="add"
-      class="stream-controls__add"
-      aria-haspopup="dialog"
-      aria-label="Add a post">+</button>
+    <?php // Owns its own + button; see snippets/post-composer/. ?>
+    <?php snippet('post-composer/post-composer') ?>
 
     <form
       method="post"

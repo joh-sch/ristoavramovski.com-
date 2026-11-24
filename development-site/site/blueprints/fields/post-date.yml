@@ -1,6 +1,21 @@
 type: date
 label: Posted
-time: true
 default: now
 required: true
-help: Drives the folder number used for ordering. Changing it re-sorts the post.
+
+# Second precision, explicitly.
+#
+# Kirby's date field defaults `time.step` to 5 MINUTES and rounds the stored
+# value to it, so a post made at 15:12:56 is saved as 15:15:00. That matters
+# here beyond display: the page.update hook recomputes `sortkey` from this
+# field, so the first Panel edit of any post would shift it in the feed and
+# could collide with a neighbour's num — which silently drops posts from the
+# feed entirely (see Stream::uniqueNum).
+time:
+  step:
+    unit: second
+    size: 1
+
+help: >
+  Drives the folder number used for ordering. Changing it moves the post in
+  the feed.

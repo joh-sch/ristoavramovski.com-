@@ -1,0 +1,13 @@
+title: Original Upload
+
+options:
+  replace: false
+
+fields:
+  note:
+    type: info
+    label: Archived original
+    text: |
+      The untouched upload, kept because a format decision made at upload time
+      should not destroy the artist's archive. It is not displayed in the feed
+      — the converted file is. Safe to delete if storage becomes a concern.

@@ -9,6 +9,11 @@
 
 define('RISTO_2026_VERSION', '0.0.0');
 
+// Plugins load *after* config, so the class has to be pulled in by hand to be
+// usable below. It is self-contained and touches no Kirby helpers during
+// detection, which is what makes this safe this early in the boot.
+require_once __DIR__ . '/../plugins/stream/src/Images.php';
+
 return [
 
     // ── Environment ──────────────────────────────────────────────────────────
@@ -45,14 +50,16 @@ return [
         'quality'   => 72,
         'interlace' => true,
 
-        // AVIF measured at ~113ms/thumb and ~2.5x smaller than JPEG on this
-        // machine. Thumbs are pre-generated on upload, so the encode cost is
-        // paid once and never by a visitor. Payload size is what matters on
-        // an endlessly scrolling feed.
+        // Detected, never asserted. Measured on this project:
         //
-        // Browser support is ~97% (Chrome 85+, Firefox 93+, Safari 16.4+).
-        // Set to 'webp' to trade ~50% more bytes for universal support.
-        'format'    => 'avif',
+        //   Homebrew PHP 8.4 (CLI)  GD, AVIF write yes
+        //   MAMP PHP 8.5.2 (web)    GD, AVIF write NO
+        //   MAMP bundled imagick    ImageMagick 7.1.0-23, no heic/heif/avif
+        //
+        // Hardcoding 'avif' produces broken thumbnails on the machine this is
+        // developed on. Risto\Stream\Images picks the best format the
+        // installed driver can actually write: avif, else webp, else jpg.
+        'format'    => Risto\Stream\Images::thumbFormat(),
 
         'srcsets' => [
             // Widths used by feed tiles. Keep in sync with the masonry

@@ -3,10 +3,12 @@ import loadComponents from 'gia/loadComponents';
 import initPageTransitions from './modules/PageTransitions.js';
 
 import StreamControls from '../site/snippets/stream-controls/js/stream-controls.js';
+import PostComposer from '../site/snippets/post-composer/js/post-composer.js';
 // create-comp inserts new imports here
 
 const components = {
   'StreamControls': StreamControls,
+  'PostComposer': PostComposer,
   // create-comp inserts new registrations here
 };
 

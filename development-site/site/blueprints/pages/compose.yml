@@ -1,0 +1,20 @@
+title: Add a post
+icon: add
+
+options:
+  changeSlug: false
+  changeStatus: false
+  changeTemplate: false
+  delete: false
+  update: false
+
+sections:
+  info:
+    type: fields
+    fields:
+      note:
+        type: info
+        label: System page
+        text: |
+          The no-JavaScript fallback for adding a post. The + button on the
+          front page normally opens a dialog instead. No editable content.

@@ -101,5 +101,25 @@ tools/release/           ← optional GitHub release automation
   With `debug` off, `Auth::validatePassword()` discards the specific error and
   rethrows a generic `PermissionException`, so rate-limiting is undetectable
   from the caught exception in production.
+- **Image capabilities are detected, never assumed.** `thumbs.format` comes
+  from `Risto\Stream\Images::thumbFormat()`. Measured on this project: Homebrew
+  PHP 8.4 CLI writes AVIF, MAMP PHP 8.5.2 (which serves the site) does not, and
+  MAMP's bundled ImageMagick 7.1.0-23 has no heic/heif/avif delegates at all.
+  Hardcoding `avif` breaks thumbnails on the machine this is developed on.
+- **`num` must be unique per bucket.** The feed cursor advances with
+  `num < last`, so two posts sharing a second make the feed skip one
+  permanently. `Stream::uniqueNum()` probes the directory for a free number.
+- **The post date field is pinned to second precision.** Kirby's date field
+  defaults `time.step` to *5 minutes* and rounds the stored value. Since the
+  update hook recomputes `sortkey` from the date, the default would move a
+  post in the feed on its first Panel edit.
+- **`$page->url()` shadows a content field named `url`.** Use
+  `$page->content()->get('url')`. Same applies to any field colliding with a
+  real Page method.
+- **`$array[null]` is a 500 on PHP 8.5**, not a notice — Whoops escalates the
+  deprecation. Cast request params before using them as array keys.
+- **`$file->thumb()` does not write anything.** It returns a lazy
+  `FileVersion`; `->save()` is what generates the file. Pre-generation without
+  it is a no-op.
 - **Never commit** generated assets, `vendor/`, `storage/`, `media/`, or
   `config.localhost.php`.

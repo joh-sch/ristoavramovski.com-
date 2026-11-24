@@ -91,6 +91,29 @@ final class Stream
     }
 
     /**
+     * The year bucket a date belongs in, creating it if absent.
+     *
+     * Buckets are unlisted: they are a storage detail, not navigable content,
+     * and keeping them out of ->listed() means nothing accidentally renders
+     * them as feed entries.
+     */
+    public static function bucketFor(\DateTimeInterface $date): Page
+    {
+        $slug   = self::bucketSlug($date);
+        $bucket = page(self::ROOT_ID . '/' . $slug);
+
+        if ($bucket !== null) {
+            return $bucket;
+        }
+
+        return self::root()->createChild([
+            'slug'     => $slug,
+            'template' => 'stream-year',
+            'content'  => ['title' => $slug],
+        ])->changeStatus('unlisted');
+    }
+
+    /**
      * The sortable `num` for a given time, as YYYYMMDDHHMMSS.
      *
      * Second precision, so two posts made in the same minute keep a stable,
@@ -113,6 +136,31 @@ final class Stream
         };
 
         return (int) date('YmdHis', $timestamp);
+    }
+
+    /**
+     * A `num` that no sibling in this bucket is already using.
+     *
+     * Non-unique nums silently break the feed: the cursor advances with
+     * `num < last`, so every other post sharing that second is skipped and
+     * never appears again. Reproduced with three posts made in one second —
+     * one vanished permanently.
+     *
+     * Probes the filesystem rather than $bucket->children(), which would
+     * instantiate every sibling just to answer a question the directory
+     * listing already contains.
+     */
+    public static function uniqueNum(Page $bucket, \DateTimeInterface $date): int
+    {
+        $num  = self::num($date);
+        $dir  = $bucket->root();
+        $stop = $num + 3600; // an hour of collisions is not a real scenario
+
+        while ($num < $stop && empty(glob($dir . '/' . $num . '_*')) === false) {
+            $num++;
+        }
+
+        return $num;
     }
 
     /**

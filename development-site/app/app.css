@@ -144,3 +144,77 @@ html.is-animating .transition-fade {
 .login-form {
   margin-top: 1.5rem;
 }
+
+/* ── Composer ─────────────────────────────────────────────────────────── */
+
+.composer {
+  display: grid;
+  gap: 0.5rem;
+  min-width: min(26rem, 85vw);
+}
+
+.composer__types {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.composer__type {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.composer__field[hidden] {
+  display: none;
+}
+
+.composer__label {
+  font-size: 0.875rem;
+}
+
+.compose-page {
+  margin-top: 1.5rem;
+}
+
+/* ── Stream (plain flow; masonry arrives in phase 4) ──────────────────── */
+
+.stream {
+  padding: 4rem 1rem 6rem;
+}
+
+.stream__grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.tile {
+  flex: 0 1 auto;
+  max-width: 100%;
+}
+
+.tile--size-s { width: 16rem; }
+.tile--size-m { width: 24rem; }
+.tile--size-l { width: 34rem; }
+
+.tile__media { margin: 0; }
+.tile__media img { width: 100%; height: auto; }
+
+.tile__caption,
+.tile__note {
+  margin: 0.5rem 0 0;
+  font-size: 0.875rem;
+}
+
+.tile__text,
+.tile__link {
+  padding: 1rem;
+  border: 1px solid currentColor;
+}
+
+.stream__empty,
+.stream__more {
+  margin: 2rem 0;
+}

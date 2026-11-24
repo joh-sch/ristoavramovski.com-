@@ -20,8 +20,9 @@ $errors = [
     'rate-limited'        => 'Too many attempts. Please wait a while before trying again.',
 ];
 
-$errorCode    = $kirby->request()->get('error');
-$errorMessage = $errors[$errorCode] ?? null;
+// Cast: a null array offset is a deprecation, which PHP 8.5 + Whoops turn
+// into a 500 rather than a notice.
+$errorMessage = $errors[(string) $kirby->request()->get('error')] ?? null;
 
 ?>
 <?php snippet('header', ['showControls' => false]) ?>

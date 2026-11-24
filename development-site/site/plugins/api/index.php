@@ -1,11 +1,13 @@
 <?php
 
 use Kirby\Cms\App as Kirby;
+use Risto\Api\PostRoutes;
 use Risto\Api\Session;
 
 load([
-    'Risto\\Api\\Respond' => 'src/Respond.php',
-    'Risto\\Api\\Session' => 'src/Session.php',
+    'Risto\\Api\\PostRoutes' => 'src/PostRoutes.php',
+    'Risto\\Api\\Respond'    => 'src/Respond.php',
+    'Risto\\Api\\Session'    => 'src/Session.php',
 ], __DIR__);
 
 Kirby::plugin('risto/api', [
@@ -41,6 +43,12 @@ Kirby::plugin('risto/api', [
             'pattern' => '_api/session/end',
             'method'  => 'POST',
             'action'  => fn () => Session::destroy(),
+        ],
+
+        [
+            'pattern' => '_api/posts',
+            'method'  => 'POST',
+            'action'  => fn () => PostRoutes::create(),
         ],
 
     ],
