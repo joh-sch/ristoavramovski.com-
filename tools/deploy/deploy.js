@@ -7,10 +7,14 @@
  *   npm run deploy -- setup  first-time provisioning (clone, dirs, config)
  *   npm run deploy -- status show what the server is currently running
  *
- * Expects the server to have git, composer and npm, and to hold a clone of
+ * Expects the server to have git, composer and rsync, and to hold a clone of
  * the GitHub repo. Configure it in tools/deploy/deploy.config.json — copy
  * deploy.config.example.json and fill it in. That file is gitignored: it
  * names a host, which is nobody else's business.
+ *
+ * Node is NOT required on the server. This host (All-Inkl shared hosting) has
+ * git, composer 2 and rsync but no node, so CSS and JS are built here and the
+ * two artifacts are rsynced across. They stay out of git either way.
  */
 
 const fs = require('fs');
@@ -19,6 +23,18 @@ const { execFileSync, execSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '../..');
 const CONFIG_PATH = path.join(__dirname, 'deploy.config.json');
+
+/**
+ * Built artifacts, shipped by rsync rather than git.
+ *
+ * Gitignored on purpose — generated files in a repository produce a diff on
+ * every build and conflict on every merge. The server cannot build them
+ * itself (no node), so they travel separately.
+ */
+const ASSETS = [
+  'development-site/app/app.min.js',
+  'development-site/app/styles/styles.css',
+];
 
 // ─── output ──────────────────────────────────────────────────────────────────
 
@@ -153,6 +169,16 @@ function setup(cfg) {
 function deploy(cfg) {
   preflight(cfg);
 
+  step('Building assets locally…');
+  local('npm run build', { stdio: 'inherit' });
+
+  for (const asset of ASSETS) {
+    if (fs.existsSync(path.join(ROOT, asset)) === false) {
+      abort(`Build did not produce ${asset}.`);
+    }
+  }
+  ok('Assets built');
+
   step(`Pushing ${cfg.branch} to ${cfg.remote}…`);
   local(`git push ${cfg.remote} ${cfg.branch}`, { stdio: 'inherit' });
   ok('Pushed');
@@ -175,10 +201,6 @@ function deploy(cfg) {
     ${cfg.composer} install --no-dev --optimize-autoloader --no-interaction
     cd ..
 
-    echo "→ npm"
-    ${cfg.npm} ci --no-audit --no-fund
-    ${cfg.npm} run build
-
     echo "→ runtime dirs"
     mkdir -p development-site/storage/accounts \
              development-site/storage/cache \
@@ -197,6 +219,23 @@ function deploy(cfg) {
   `);
 
   ok('Server updated');
+
+  // After the git reset, not before: the reset would wipe them otherwise,
+  // since they are gitignored and therefore untracked on the server too.
+  step('Copying built assets…');
+
+  for (const asset of ASSETS) {
+    const target = `${cfg.path}/${path.dirname(asset)}/`;
+
+    execFileSync('rsync', [
+      '-az',
+      '-e', `ssh -p ${cfg.port}`,
+      path.join(ROOT, asset),
+      `${cfg.host}:${target}`,
+    ], { stdio: 'inherit' });
+  }
+
+  ok(`Copied ${ASSETS.length} assets`);
 
   step('Checking the site responds…');
 
@@ -224,7 +263,8 @@ function status(cfg) {
     echo "branch   : $(git rev-parse --abbrev-ref HEAD)"
     echo "kirby    : $(${cfg.php} -r 'require "development-site/vendor/autoload.php"; echo \\Kirby\\Cms\\App::version();' 2>/dev/null || echo 'not installed')"
     echo "posts    : $(find development-site/content/stream -mindepth 2 -maxdepth 2 -type d 2>/dev/null | wc -l | tr -d ' ')"
-    echo "assets   : $([ -f development-site/app/app.min.js ] && echo built || echo MISSING)"
+    echo "js       : $([ -f development-site/app/app.min.js ] && echo \"$(date -r development-site/app/app.min.js '+%Y-%m-%d %H:%M')\" || echo MISSING)"
+    echo "css      : $([ -f development-site/app/styles/styles.css ] && echo \"$(date -r development-site/app/styles/styles.css '+%Y-%m-%d %H:%M')\" || echo MISSING)"
   `, { capture: true });
 
   console.log(out.split('\n').filter(Boolean).map((l) => `  ${l}`).join('\n'));

@@ -1,7 +1,12 @@
 # Deployment
 
 Deploys run from your machine over SSH. The server holds a clone of the
-GitHub repo and builds its own assets, so nothing compiled is ever committed.
+GitHub repo and installs Kirby itself via Composer.
+
+**CSS and JS are built locally and rsynced**, because this host has git,
+Composer 2 and rsync but **no node**. They are gitignored either way —
+generated files in a repository diff on every build and conflict on every
+merge.
 
 ```sh
 npm run deploy
@@ -20,8 +25,8 @@ and checks the site answers 200.
 | System pages (home, error, login, compose, stream root) | ✅ | |
 | `composer.lock`, `package-lock.json` | ✅ | |
 | **Posts** (`content/stream/<year>/…`) | | ✅ |
-| `vendor/`, `node_modules/` | | ✅ built on deploy |
-| `app.min.js`, `styles.css` | | ✅ built on deploy |
+| `vendor/` (Kirby) | | ✅ composer, on the server |
+| `app.min.js`, `styles.css` | | ✅ built locally, rsynced |
 | `media/` (thumbnails) | | ✅ regenerated |
 | `storage/` (accounts, cache, sessions) | | ✅ |
 | `config.<hostname>.php` | | ✅ |
@@ -78,9 +83,14 @@ npm run deploy -- setup
 
 Clones the repo and creates the writable runtime directories. Then, by hand:
 
-1. **Point the vhost document root at `<path>/development-site`** — not at the
-   repository root. Everything above `development-site/` (including
-   `tools/`, `docs/` and `.git/`) must stay outside the web root.
+1. **Point the document root at `<path>/development-site`** — not at the
+   repository root. Everything above `development-site/` (including `tools/`,
+   `docs/` and `.git/`) must stay outside the web root, or `/.git/config` is
+   downloadable by anyone.
+
+   On All-Inkl this is the subdomain's *Verzeichnis* in KAS: set it to
+   `<domain-folder>/development-site`. Several existing sites on this account
+   already use that nested layout.
 2. **Create the environment config** on the server:
 
    ```sh
@@ -115,9 +125,11 @@ Refuses to run with an uncommitted working tree, or when your branch does not
 match the one the server tracks — the server deploys from the remote, so
 uncommitted work would silently not ship.
 
-On the server it fetches, hard-resets to the remote branch, runs
-`composer install --no-dev`, `npm ci && npm run build`, recreates runtime
-directories and clears the page cache and generated thumbnails.
+It builds the assets locally first, pushes, then on the server fetches,
+hard-resets to the remote branch, runs `composer install --no-dev`, recreates
+runtime directories and clears the page cache and generated thumbnails —
+and finally rsyncs the built CSS and JS across. The rsync happens *after* the
+reset, which would otherwise wipe them.
 
 The hard reset is deliberate: the server never has local commits, and a merge
 conflict mid-deploy would leave the site half-updated.
