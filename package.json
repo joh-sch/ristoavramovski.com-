@@ -28,7 +28,6 @@
     "tempDir": "TEMP"
   },
   "dependencies": {
-    "@swup/gia-plugin": "^2.0.4",
     "@tailwindcss/cli": "^4.3.5",
     "gia": "^1.0.1",
     "regenerator-runtime": "^0.14.1",

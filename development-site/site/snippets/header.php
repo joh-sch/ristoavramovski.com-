@@ -32,6 +32,24 @@ $metaDescription = $page->description()->or($site->description());
 
   <?php // Styles // ?>
   <?= css('app/styles/styles.css?v=' . RISTO_2026_VERSION) ?>
+
+  <?php
+    // Applies the visitor's saved colours before first paint. Doing this in
+    // the bundle instead would flash the default palette, because the bundle
+    // is deferred. Inline on purpose — if a Content-Security-Policy is added
+    // later this needs a nonce.
+  ?>
+  <script>
+    (function () {
+      try {
+        var t = JSON.parse(localStorage.getItem('risto.theme') || 'null');
+        if (!t) return;
+        var r = document.documentElement;
+        if (t.paper) r.style.setProperty('--color-paper', t.paper);
+        if (t.ink) r.style.setProperty('--color-ink', t.ink);
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body data-page="<?= esc($page->id(), 'attr') ?>">
 
@@ -42,4 +60,5 @@ $metaDescription = $page->description()->or($site->description());
   ?>
   <div id="chrome">
     <?php if (($showControls ?? true) === true) snippet('stream-controls/stream-controls') ?>
+    <?php snippet('theme-controls/theme-controls') ?>
   </div>
