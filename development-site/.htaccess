@@ -44,6 +44,17 @@ RewriteRule .* - [env=HTTP_AUTHORIZATION:%1]
 # block direct access to kirby and the vendor folder
 RewriteRule ^(kirby|vendor)/(.*) index.php [L]
 
+# block the composer manifests
+# composer.lock names the exact version of every dependency, which is all an
+# attacker needs to match the install against published CVEs
+RewriteRule ^composer\.(json|lock)$ index.php [L]
+
+# block the unbundled frontend sources
+# app.min.js and styles/styles.css are the build output and must stay
+# reachable; the sources beside them are not meant to be served
+RewriteRule ^app/(app\.js|app\.css)$ index.php [L]
+RewriteRule ^app/modules/(.*) index.php [L]
+
 # make site links work
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
