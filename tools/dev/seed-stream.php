@@ -43,20 +43,34 @@ if ($reset === true) {
 
 // ── test account ────────────────────────────────────────────────────────────
 
-const TEST_EMAIL    = 'artist@risto.test';
-const TEST_PASSWORD = 'stream-test-2026';
+const TEST_EMAIL = 'artist@risto.test';
 
+/**
+ * Never hardcode the password here.
+ *
+ * This repository is public, so a literal would be published — and the real
+ * risk is not this throwaway .test account but the habit: the same string
+ * ends up on the server when the artist's account is created.
+ *
+ * Set STREAM_SEED_PASSWORD to choose one, otherwise a random password is
+ * generated and printed once.
+ */
 if ($kirby->user(TEST_EMAIL) === null) {
+    $password = getenv('STREAM_SEED_PASSWORD') ?: bin2hex(random_bytes(9));
+
     $user = $kirby->users()->create([
         'email'    => TEST_EMAIL,
-        'password' => TEST_PASSWORD,
+        'password' => $password,
         'role'     => 'artist',
         'name'     => 'Test Artist',
         'language' => 'en',
     ]);
-    echo "  + user {$user->email()} / " . TEST_PASSWORD . " (role: artist)\n";
+
+    echo "  + user {$user->email()} (role: artist)\n";
+    echo "    password: {$password}\n";
+    echo "    ↑ shown once — note it down, or set STREAM_SEED_PASSWORD next time\n";
 } else {
-    echo "  = user " . TEST_EMAIL . " already exists\n";
+    echo "  = user " . TEST_EMAIL . " already exists (password unchanged)\n";
 }
 
 // ── helpers ─────────────────────────────────────────────────────────────────
