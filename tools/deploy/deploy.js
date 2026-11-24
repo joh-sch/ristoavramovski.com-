@@ -131,14 +131,21 @@ function setup(cfg) {
   step('Preparing the server…');
 
   ssh(cfg, `
-    if [ -d "${cfg.path}/.git" ]; then
+    mkdir -p "${cfg.path}"
+    cd "${cfg.path}"
+
+    if [ -d .git ]; then
       echo "  repository already present — skipping clone"
     else
-      mkdir -p "${cfg.path}"
-      git clone --branch "${cfg.branch}" "${repo}" "${cfg.path}"
+      # init + fetch rather than clone: the hosting panel creates the
+      # document-root directory when the domain is pointed at it, and
+      # git clone refuses a non-empty target.
+      git init -q
+      git remote add origin "${repo}" 2>/dev/null || git remote set-url origin "${repo}"
+      git fetch --quiet origin "${cfg.branch}"
+      git checkout -b "${cfg.branch}" "origin/${cfg.branch}"
+      echo "  checked out ${cfg.branch}"
     fi
-
-    cd "${cfg.path}"
 
     # Writable runtime state. These are gitignored, so they never arrive with
     # a deploy and must exist before Kirby boots.
