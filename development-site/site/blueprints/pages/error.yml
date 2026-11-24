@@ -1,0 +1,25 @@
+title: Error Page
+
+options:
+  changeSlug: false
+  changeStatus: false
+  changeTemplate: false
+  delete: false
+
+columns:
+  - width: 2/3
+    fields:
+      text:
+        type: textarea
+        label: Text
+        buttons:
+          - bold
+          - italic
+          - link
+
+  - width: 1/3
+    sections:
+      meta:
+        type: fields
+        fields:
+          description: fields/description

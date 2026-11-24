@@ -1,0 +1,15 @@
+{
+  "name": "risto-2026-build-utils",
+  "version": "1.0.0",
+  "description": "Build utilities for the Risto 2026 project",
+  "private": true,
+  "scripts": {
+    "create-comp": "node scripts/create-comp.js"
+  },
+  "author": "schmoll.studio",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "fs-extra": "^11.4.1"
+  }
+}

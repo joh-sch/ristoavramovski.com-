@@ -1,0 +1,11 @@
+Title: Home
+
+----
+
+Description: 
+
+----
+
+Text:
+
+Foundation ready. Replace this with project content.

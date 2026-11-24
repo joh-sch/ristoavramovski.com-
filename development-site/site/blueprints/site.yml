@@ -1,0 +1,25 @@
+title: Site
+
+columns:
+  - width: 2/3
+    sections:
+      pages:
+        type: pages
+        label: Pages
+        layout: list
+
+  - width: 1/3
+    sections:
+      meta:
+        type: fields
+        fields:
+          title:
+            type: text
+            label: Site title
+          description:
+            type: textarea
+            label: Default meta description
+            size: small
+            maxlength: 160
+            buttons: false
+            help: Fallback description used when a page has none.

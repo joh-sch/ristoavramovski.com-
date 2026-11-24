@@ -1,0 +1,57 @@
+# Kirby .htaccess
+
+# rewrite rules
+<IfModule mod_rewrite.c>
+
+# enable awesome urls. i.e.:
+# http://yourdomain.com/about-us/team
+RewriteEngine on
+
+# make sure to set the RewriteBase correctly
+# if you are running the site in a subfolder.
+# Otherwise links or the entire site will break.
+#
+# If your homepage is http://yourdomain.com/mysite
+# you have to set the RewriteBase to:
+#
+# RewriteBase /mysite
+
+# In some environments it's necessary to
+# set the RewriteBase to:
+#
+# RewriteBase /
+
+# block files and folders beginning with a dot, such as .git
+# except for the .well-known folder, which is used for Let's Encrypt and security.txt
+RewriteRule (^|/)\.(?!well-known\/) index.php [L]
+
+# block text files in the content folder from being accessed directly
+RewriteRule ^content/(.*)\.(txt|md|mdown)$ index.php [L]
+
+# block all files in the site folder from being accessed directly
+# except for requests to plugin assets files
+RewriteCond %{REQUEST_URI} !^/site/plugins/[^/]+/assets/.*
+RewriteCond %{REQUEST_URI} !^/site/plugins/[^/]+/[^/]+\.(css|js)$
+RewriteRule ^site/(.*) index.php [L]
+
+# block direct access to the storage folder (accounts, cache, sessions)
+RewriteRule ^storage/(.*) index.php [L]
+
+# Enable authentication header
+RewriteCond %{HTTP:Authorization} ^(.+)$
+RewriteRule .* - [env=HTTP_AUTHORIZATION:%1]
+
+# block direct access to kirby and the vendor folder
+RewriteRule ^(kirby|vendor)/(.*) index.php [L]
+
+# make site links work
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*) index.php [L]
+
+</IfModule>
+
+# compress text file responses
+<IfModule mod_deflate.c>
+AddOutputFilterByType DEFLATE text/plain text/html text/xml text/css application/xml application/vnd.rss+xml application/json application/javascript application/x-javascript
+</IfModule>
