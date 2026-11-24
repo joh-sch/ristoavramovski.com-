@@ -123,12 +123,29 @@ if ($count === 0) {
 
 $start = new DateTimeImmutable('2020-01-01 09:00:00');
 
+// Deterministic variety: the masonry layout is only exercised by tiles of
+// differing heights, spans and types.
+$sizes  = ['s', 'm', 'm', 'l', 'm', 's'];
+$lengths = [4, 12, 30, 8, 60, 18];
+
 for ($i = 0; $i < $count; $i++) {
     $date = $start->add(new DateInterval('PT' . ($i * 3) . 'H'));
+    $size = $sizes[$i % count($sizes)];
+
+    if ($i % 7 === 3) {
+        makePost($date, 'post-link', [
+            'title' => 'Reference ' . $i,
+            'url'   => 'https://example.org/reference-' . $i,
+            'text'  => 'Reference ' . $i,
+            'size'  => $size,
+        ]);
+        continue;
+    }
 
     makePost($date, 'post-text', [
         'title' => 'Post ' . $i,
-        'text'  => 'Generated post ' . $i . '. ' . str_repeat('lorem ipsum dolor sit amet ', 12),
+        'text'  => 'Generated post ' . $i . '. ' . str_repeat('lorem ipsum dolor sit amet ', $lengths[$i % count($lengths)]),
+        'size'  => $size,
     ]);
 
     if ($i > 0 && $i % 500 === 0) {

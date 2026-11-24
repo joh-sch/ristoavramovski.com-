@@ -7,38 +7,23 @@
  * it marks the response cookie-dependent, so anonymous visitors get cached
  * HTML and the artist always gets a fresh render. See docs/PLAN.md §1.1.
  *
- * The layout here is a plain flow. Column masonry, cursor-driven infinite
- * scroll and content-visibility arrive in phase 4; the tile snippets are
- * already shared with it.
+ * Layout and pagination live in the stream-feed component.
  */
 
 $user = $kirby->user();
-$feed = $site->feed();
+
+// ?cursor= is the no-JavaScript "older posts" path. Note that a query string
+// makes Kirby treat the page as uncacheable, which is correct here: these are
+// one-off deep links, not the hot path.
+$cursor = $kirby->request()->get('cursor');
+$feed   = $site->feed(is_string($cursor) ? $cursor : null);
 
 ?>
 <?php snippet('header') ?>
 
 <main id="swup" data-page-id="<?= esc($page->id(), 'attr') ?>" class="stream">
 
-  <?php if ($feed['posts']->isEmpty()): ?>
-    <p class="stream__empty">
-      <?= $user ? 'Nothing here yet — use + to add the first post.' : 'Nothing here yet.' ?>
-    </p>
-  <?php endif ?>
-
-  <div class="stream__grid">
-    <?php foreach ($feed['posts'] as $post): ?>
-      <?php snippet('post/tile', ['post' => $post]) ?>
-    <?php endforeach ?>
-  </div>
-
-  <?php if ($feed['nextCursor'] !== null): ?>
-    <?php // Replaced by the IntersectionObserver sentinel in phase 4. ?>
-    <p class="stream__more">
-      <a href="?cursor=<?= esc($feed['nextCursor'], 'attr') ?>">Older posts</a>
-    </p>
-  <?php endif ?>
-
+  <?php snippet('stream-feed/stream-feed', ['feed' => $feed]) ?>
 </main>
 
 <?php snippet('footer') ?>

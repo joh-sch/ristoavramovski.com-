@@ -2,17 +2,28 @@
 /**
  * One feed tile.
  *
- * Dispatches on the post's template, so adding a post type later means adding
- * a snippet rather than editing a conditional here.
+ * Dispatches on the post's template, so a new post type is a new snippet
+ * rather than another branch here.
  *
- * content-visibility lets the browser skip rendering tiles that are off
- * screen, which is what keeps an endlessly growing feed cheap. It needs
- * contain-intrinsic-size to avoid scrollbar jitter; phase 4 sets that from
- * the real tile dimensions.
+ * data-span says how many columns the tile occupies; the layout measures the
+ * rest. Image tiles do not need to advertise their ratio here — lazy-img
+ * already puts the server-known dimensions on the <img> as an aspect-ratio,
+ * so the browser reserves the correct space before the image loads and a
+ * measurement taken straight away is already right.
  */
 /** @var Kirby\Cms\Page $post */
+
 $type = $post->intendedTemplate()->name();
+$size = (string) $post->size()->or('m');
+
+// Large tiles take two columns where there is room, which is what gives the
+// feed its varied rhythm. The layout clamps this to the column count.
+$span = $size === 'l' ? 2 : 1;
+
 ?>
-<article class="tile tile--<?= esc(str_replace('post-', '', $type), 'attr') ?> tile--size-<?= esc($post->size()->or('m'), 'attr') ?>">
+<article
+  class="tile tile--<?= esc(str_replace('post-', '', $type), 'attr') ?> tile--size-<?= esc($size, 'attr') ?>"
+  data-span="<?= esc($span, 'attr') ?>"
+  id="tile-<?= esc($post->num(), 'attr') ?>">
   <?php snippet('post/' . $type, ['post' => $post]) ?>
 </article>

@@ -1,0 +1,9 @@
+Alt: Abstract study 4
+
+----
+
+Uuid: 2pciudyugvul7hgg
+
+----
+
+Template: post-image-file

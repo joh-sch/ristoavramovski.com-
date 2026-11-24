@@ -177,30 +177,69 @@ html.is-animating .transition-fade {
   margin-top: 1.5rem;
 }
 
-/* ── Stream (plain flow; masonry arrives in phase 4) ──────────────────── */
+/* ── Stream ───────────────────────────────────────────────────────────── */
 
 .stream {
   padding: 4rem 1rem 6rem;
 }
 
-.stream__grid {
+/*
+ * Without JS the grid is an ordinary flow and every tile is readable. The
+ * component adds .is-masonry, which switches to absolute positioning — so a
+ * failed bundle degrades to a single readable column rather than a blank page.
+ */
+.stream-feed__grid {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
   gap: 1rem;
 }
 
+.is-masonry .stream-feed__grid {
+  display: block;
+  position: relative;
+}
+
+.is-masonry .tile {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/*
+ * No will-change here. Tile transforms are written once and never animated,
+ * so it buys nothing — and promoting every tile in an endless feed to its own
+ * compositor layer costs memory and stops content-visibility skipping them.
+ */
+
+/*
+ * Skips rendering tiles that are off screen, which is what keeps an endlessly
+ * growing feed cheap. contain-intrinsic-size is set per tile by the component
+ * from its real measured height, so the scrollbar stays honest.
+ *
+ * Only applied once a tile is placed: before that the layout still needs to
+ * measure it, and content-visibility would report the placeholder size.
+ */
+.is-masonry .tile.is-placed {
+  content-visibility: auto;
+}
+
 .tile {
-  flex: 0 1 auto;
   max-width: 100%;
 }
 
-.tile--size-s { width: 16rem; }
-.tile--size-m { width: 24rem; }
-.tile--size-l { width: 34rem; }
+.stream-feed__grid > .tile:not(.is-placed) {
+  /* flow fallback widths, used until the layout runs */
+  width: 22rem;
+}
 
 .tile__media { margin: 0; }
-.tile__media img { width: 100%; height: auto; }
+
+.tile__media img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
 
 .tile__caption,
 .tile__note {
@@ -214,7 +253,17 @@ html.is-animating .transition-fade {
   border: 1px solid currentColor;
 }
 
-.stream__empty,
-.stream__more {
+.stream-feed__sentinel {
+  height: 1px;
+}
+
+.stream-feed__empty,
+.stream-feed__more,
+.stream-feed__status {
   margin: 2rem 0;
+}
+
+.stream-feed__status {
+  font-size: 0.875rem;
+  opacity: 0.7;
 }

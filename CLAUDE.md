@@ -121,5 +121,22 @@ tools/release/           ← optional GitHub release automation
 - **`$file->thumb()` does not write anything.** It returns a lazy
   `FileVersion`; `->save()` is what generates the file. Pre-generation without
   it is a no-op.
+- **The masonry layout is JS, and deliberately so.** CSS `columns` fills
+  column 1 before column 2 (an endless feed would run it infinitely long);
+  Grid row-spans need `grid-auto-flow: dense`, which backfills *new* posts
+  into *old* gaps — putting new work above old. Neither gives shortest-column
+  packing in chronological order.
+- **Never set `will-change` on feed tiles.** Transforms are written once and
+  never animated, so it buys nothing, and promoting every tile in an endless
+  feed to its own compositor layer costs memory.
+- **Measure tiles before applying `content-visibility`.** A skipped element
+  reports its `contain-intrinsic-size`, not its real height, so measuring a
+  placed tile returns the previous estimate and corrupts the packing.
+  `place()` strips `.is-placed`, measures, then re-adds it.
+- **Tile heights are measured, not computed from aspect ratio.** An earlier
+  attempt derived image heights arithmetically and lost the caption, which
+  overlapped tiles by exactly the caption height. `lazy-img` already puts the
+  server-known dimensions on the `<img>`, so the browser reserves correct
+  space before load and a single batched measurement pass is exact.
 - **Never commit** generated assets, `vendor/`, `storage/`, `media/`, or
   `config.localhost.php`.

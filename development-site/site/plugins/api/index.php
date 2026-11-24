@@ -1,10 +1,12 @@
 <?php
 
 use Kirby\Cms\App as Kirby;
+use Risto\Api\FeedRoutes;
 use Risto\Api\PostRoutes;
 use Risto\Api\Session;
 
 load([
+    'Risto\\Api\\FeedRoutes' => 'src/FeedRoutes.php',
     'Risto\\Api\\PostRoutes' => 'src/PostRoutes.php',
     'Risto\\Api\\Respond'    => 'src/Respond.php',
     'Risto\\Api\\Session'    => 'src/Session.php',
@@ -49,6 +51,12 @@ Kirby::plugin('risto/api', [
             'pattern' => '_api/posts',
             'method'  => 'POST',
             'action'  => fn () => PostRoutes::create(),
+        ],
+
+        [
+            'pattern' => '_api/feed',
+            'method'  => 'GET',
+            'action'  => fn () => FeedRoutes::page(),
         ],
 
     ],

@@ -146,9 +146,11 @@ export default class PostComposer extends Component {
         return;
       }
 
-      // Reloading keeps one source of truth for how a tile renders: the
-      // server. Replaced in phase 4, where the new post is prepended to the
-      // masonry layout in place.
+      // Deliberately a reload rather than prepending the new tile. Inserting
+      // at the head of a masonry layout shifts every tile below it, so it
+      // costs a full relayout anyway — and a reload keeps the server as the
+      // single authority on how a tile renders. Posting is infrequent and
+      // lands you at the top of the feed, which is where the new post is.
       window.location.reload();
     } catch {
       this.showError('Could not reach the server. Please try again.');

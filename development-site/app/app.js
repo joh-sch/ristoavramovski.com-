@@ -4,11 +4,13 @@ import initPageTransitions from './modules/PageTransitions.js';
 
 import StreamControls from '../site/snippets/stream-controls/js/stream-controls.js';
 import PostComposer from '../site/snippets/post-composer/js/post-composer.js';
+import StreamFeed from '../site/snippets/stream-feed/js/stream-feed.js';
 // create-comp inserts new imports here
 
 const components = {
   'StreamControls': StreamControls,
   'PostComposer': PostComposer,
+  'StreamFeed': StreamFeed,
   // create-comp inserts new registrations here
 };
 
