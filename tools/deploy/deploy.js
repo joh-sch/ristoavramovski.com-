@@ -134,8 +134,11 @@ function setup(cfg) {
     mkdir -p "${cfg.path}"
     cd "${cfg.path}"
 
-    if [ -d .git ]; then
-      echo "  repository already present — skipping clone"
+    # Test for a real commit, not just .git: an interrupted first run leaves
+    # an initialised repo with no HEAD, which would otherwise be mistaken for
+    # a working checkout and silently skipped forever.
+    if git rev-parse --verify HEAD >/dev/null 2>&1; then
+      echo "  repository already checked out — skipping"
     else
       # init + fetch rather than clone: the hosting panel creates the
       # document-root directory when the domain is pointed at it, and
