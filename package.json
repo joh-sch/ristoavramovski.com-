@@ -1,6 +1,6 @@
 {
   "name": "risto-2026",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Risto 2026 — Kirby 5 website",
   "scripts": {
@@ -26,6 +26,7 @@
   "release": {
     "branch": "devel",
     "changelog": "CHANGELOG.md",
+    "tagPrefix": "v",
     "tempDir": "TEMP"
   },
   "dependencies": {

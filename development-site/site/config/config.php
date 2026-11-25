@@ -7,7 +7,7 @@
  * of this file by Kirby. See config.localhost.php.example.
  */
 
-define('RISTO_2026_VERSION', '0.0.0');
+define('RISTO_2026_VERSION', '0.1.0');
 
 // Plugins load *after* config, so the class has to be pulled in by hand to be
 // usable below. It is self-contained and touches no Kirby helpers during

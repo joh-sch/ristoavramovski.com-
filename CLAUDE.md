@@ -36,6 +36,8 @@ tools/release/           ← optional GitHub release automation
 | `npm run create-comp "Name"` | Scaffolds a snippet + gia component and registers it in `app.js` |
 | `npm run init-kirby` | Installs Kirby via Composer, creates runtime dirs |
 | `npm run updt-version <patch\|minor\|major\|x.y.z>` | Bumps `package.json` + `RISTO_2026_VERSION`; add `--commit` to commit |
+| `npm run release` | Tags and publishes a GitHub release from the changelog — see `docs/RELEASING.md` |
+| `npm run deploy` | Builds locally and updates the server over SSH — see `docs/DEPLOYMENT.md` |
 
 ## Conventions
 

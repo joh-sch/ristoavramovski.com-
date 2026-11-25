@@ -22,7 +22,7 @@ export default [
     },
   },
   {
-    // Generated bundle — never lint it.
-    ignores: [`${APP}/app.min.js`],
+    // Generated bundles — never lint them.
+    ignores: [`${APP}/*.min.js`],
   },
 ];
