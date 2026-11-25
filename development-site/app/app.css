@@ -461,3 +461,53 @@ html.is-animating .transition-fade {
   opacity: 0.7;
   min-height: 1em;
 }
+
+/*
+ * While the editor is open the canvas shows the same strokes as the saved
+ * layer, so showing both would double them up at identical coordinates.
+ */
+.is-drawing .drawing-layer {
+  display: none;
+}
+
+/* ── Saving ───────────────────────────────────────────────────────────── */
+
+.draw-controls__busy {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background: color-mix(in srgb, var(--color-paper) 72%, transparent);
+  color: inherit;
+  font-size: 0.875rem;
+  /* Catches every pointer event, which is what makes the page inert. */
+  cursor: progress;
+}
+
+.draw-controls__busy[hidden] {
+  display: none;
+}
+
+.is-saving {
+  cursor: progress;
+}
+
+.draw-controls__spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: risto-spin 0.7s linear infinite;
+}
+
+@keyframes risto-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .draw-controls__spinner { animation-duration: 2.4s; }
+}

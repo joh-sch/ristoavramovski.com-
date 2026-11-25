@@ -51,12 +51,19 @@ final class Drawing
     }
 
     /**
-     * Replaces the layer.
+     * Replaces the layer and returns what was actually stored.
+     *
+     * The caller hands the stored SVG back to the client so the live page can
+     * update without a reload. Returning it rather than echoing the client's
+     * own copy keeps the server the single authority on what gets displayed —
+     * the version in the page is then always the sanitised one.
+     *
+     * @return array{svg: string, width: int, height: int}
      *
      * @throws InvalidArgumentException on malformed or oversized input
      * @throws NotFoundException if the storage page is missing
      */
-    public static function write(string $json, string $svg, int $width, int $height): void
+    public static function write(string $json, string $svg, int $width, int $height): array
     {
         if (strlen($json) > self::MAX_BYTES || strlen($svg) > self::MAX_BYTES) {
             throw new InvalidArgumentException(message: 'That drawing is too large to save.');
@@ -80,12 +87,25 @@ final class Drawing
             throw new NotFoundException(message: 'Drawing storage page not found.');
         }
 
+        // A canvas with no objects is not an empty drawing to store — it is
+        // no drawing at all. Keeping the serialised-but-blank SVG would leave
+        // an empty layer in every page, and make "Clear" look like it failed.
+        if (empty($decoded['objects'])) {
+            $page->update(['json' => '', 'svg' => '', 'width' => 0, 'height' => 0]);
+
+            return ['svg' => '', 'width' => 0, 'height' => 0];
+        }
+
+        $clean = self::sanitiseSvg($svg);
+
         $page->update([
             'json'   => $json,
-            'svg'    => self::sanitiseSvg($svg),
+            'svg'    => $clean,
             'width'  => $width,
             'height' => $height,
         ]);
+
+        return ['svg' => $clean, 'width' => $width, 'height' => $height];
     }
 
     /**

@@ -52,4 +52,14 @@ if (kirby()->user() === null) return;
     <p g-ref="status" class="draw-controls__status" role="status" aria-live="polite"></p>
   </div>
 
+  <?php
+    // Covers the viewport while a save is in flight. It sits in the markup
+    // rather than being created on demand so there is nothing to build at the
+    // moment the page is meant to stop responding.
+  ?>
+  <div g-ref="busy" class="draw-controls__busy" hidden>
+    <span class="draw-controls__spinner" aria-hidden="true"></span>
+    <span>Saving…</span>
+  </div>
+
 </div>

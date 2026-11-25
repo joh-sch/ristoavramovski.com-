@@ -52,7 +52,7 @@ final class DrawingRoutes
         $request = $kirby->request();
 
         try {
-            Drawing::write(
+            $stored = Drawing::write(
                 json: (string) $request->get('json', ''),
                 svg: (string) $request->get('svg', ''),
                 width: (int) $request->get('width', 0),
@@ -64,6 +64,12 @@ final class DrawingRoutes
             return Respond::fail('failed', 'The drawing could not be saved.', 500);
         }
 
-        return Respond::ok();
+        // Hand back the sanitised markup so the page can swap its layer in
+        // place instead of reloading.
+        return Respond::ok([
+            'svg'    => $stored['svg'],
+            'width'  => $stored['width'],
+            'height' => $stored['height'],
+        ]);
     }
 }
