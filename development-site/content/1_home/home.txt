@@ -1,0 +1,13 @@
+Title: Home
+
+----
+
+Description:
+
+----
+
+Text: Foundation ready. Replace this with project content.
+
+----
+
+Uuid: 82fkjynizlgdkt2k
