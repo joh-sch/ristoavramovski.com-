@@ -1,0 +1,18 @@
+title: Project Year
+icon: archive
+
+options:
+  changeSlug: false
+  changeStatus: false
+  changeTemplate: false
+  delete: false
+  preview: false
+
+sections:
+  projects:
+    type: pages
+    label: Projects
+    layout: list
+    sortBy: num desc
+    templates:
+      - project

@@ -56,6 +56,12 @@ Kirby::plugin('risto/api', [
         ],
 
         [
+            'pattern' => '_api/projects/:id',
+            'method'  => 'DELETE',
+            'action'  => fn (string $id) => PostRoutes::deleteProject($id),
+        ],
+
+        [
             'pattern' => '_api/feed',
             'method'  => 'GET',
             'action'  => fn () => FeedRoutes::page(),

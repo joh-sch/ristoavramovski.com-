@@ -267,6 +267,77 @@ html.is-animating .transition-fade {
 .tile__text > :last-child,
 .tile__link > :last-child { margin-bottom: 0; }
 
+.composer__project-layers {
+  display: grid;
+  gap: 0.75rem;
+  margin-block: 0.75rem;
+}
+
+.composer__project-layer {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid currentColor;
+}
+
+.tile__project {
+  position: relative;
+  padding-block-end: 1.5rem;
+  perspective: 55rem;
+}
+
+.tile__project-title {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+}
+
+.tile__project-stack {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  padding: 0 2.25rem 2.25rem 0;
+  perspective: 60rem;
+  transform-style: preserve-3d;
+}
+
+.tile__project-layer {
+  grid-area: 1 / 1;
+  position: relative;
+  min-width: 0;
+  margin: 0;
+  background: var(--color-paper);
+  box-shadow: 0 0.35rem 0.9rem rgb(0 0 0 / 12%);
+  transform:
+    translate3d(
+      calc((var(--project-stack-depth) - var(--project-depth)) * 0.75rem),
+      calc(var(--project-depth) * 0.75rem),
+      calc(var(--project-depth) * -2px)
+    )
+    rotateX(1deg);
+  z-index: calc(var(--project-layer-count) - var(--project-index));
+}
+
+
+.tile__project-text {
+  padding: 0.75rem;
+}
+
+@media (max-width: 40rem) {
+  .tile__project-stack {
+    padding-right: 1.125rem;
+    padding-bottom: 1.125rem;
+  }
+
+  .tile__project-layer {
+    transform:
+      translate3d(
+        calc((var(--project-stack-depth) - var(--project-depth)) * 0.375rem),
+        calc(var(--project-depth) * 0.375rem),
+        calc(var(--project-depth) * -1px)
+      )
+      rotateX(0.5deg);
+  }
+}
+
 .stream-feed__sentinel {
   height: 1px;
 }

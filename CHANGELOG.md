@@ -10,6 +10,20 @@ blueprints — may change in any minor release. See `docs/RELEASING.md`.
 
 ## [Unreleased]
 
+### Added
+
+- **Project posts.** Create projects with ordered text and image layers, managed
+  in Kirby as a separate collection. Project tiles join the chronological feed
+  and render their layers as an overlapping isometric stack.
+- **Project image uploads.** Upload or select attached project images directly
+  from an image layer in the Panel; project images use their own file template
+  and alt-text metadata.
+
+### Changed
+
+- Kirby content under `development-site/content/` is no longer tracked. Provide
+  or restore content separately when setting up a fresh checkout.
+
 ## [0.1.0] — 2026-11-24
 
 First release. The site is a usable foundation: the artist can log in, post,

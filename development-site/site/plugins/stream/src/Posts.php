@@ -144,7 +144,7 @@ final class Posts
      * media type against the file's actual contents rather than the
      * browser-supplied Content-Type, which is attacker-controlled.
      */
-    private static function assertUploadOk(array $upload): void
+    public static function assertUploadOk(array $upload): void
     {
         $error = (int) ($upload['error'] ?? UPLOAD_ERR_OK);
 

@@ -62,7 +62,7 @@ $accept = array_values(array_filter(
       <input type="hidden" name="csrf" value="<?= esc(csrf(), 'attr') ?>">
 
       <div class="composer__types" role="radiogroup" aria-label="Post type">
-        <?php foreach (['text' => 'Text', 'image' => 'Image', 'link' => 'Link'] as $value => $label): ?>
+        <?php foreach (['text' => 'Text', 'image' => 'Image', 'link' => 'Link', 'project' => 'Project'] as $value => $label): ?>
           <label class="composer__type">
             <input
               type="radio"
@@ -73,6 +73,25 @@ $accept = array_values(array_filter(
             <?= esc($label) ?>
           </label>
         <?php endforeach ?>
+      </div>
+
+      <?php // Project ?>
+      <div g-ref="projectField" class="composer__field" hidden>
+        <label class="composer__label" for="composer-project-title">Project title</label>
+        <input
+          type="text"
+          id="composer-project-title"
+          name="projectTitle"
+          g-ref="projectTitle"
+          maxlength="120">
+
+        <div g-ref="projectLayers" class="composer__project-layers" aria-label="Project layers"></div>
+        <div class="stream-controls__actions">
+          <button type="button" g-ref="addTextLayer">Add text</button>
+          <button type="button" g-ref="addImageLayer">Add image</button>
+        </div>
+        <input type="hidden" name="projectLayers" g-ref="projectLayersInput">
+        <input type="hidden" name="requestId" g-ref="requestId">
       </div>
 
       <?php // Text — also the caption for an image, and the note on a link. ?>

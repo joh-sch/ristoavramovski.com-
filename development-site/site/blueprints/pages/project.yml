@@ -1,0 +1,68 @@
+title: Project
+icon: palette
+
+num: "{{ page.sortkey }}"
+
+options:
+  changeTemplate: false
+  preview: true
+
+columns:
+  - width: 2/3
+    sections:
+      content:
+        type: fields
+        fields:
+          title:
+            type: text
+            required: true
+            maxlength: 120
+          layers:
+            type: structure
+            label: Layers
+            max: 12
+            fields:
+              type:
+                type: select
+                required: true
+                options:
+                  text: Text
+                  image: Image
+              text:
+                type: textarea
+                maxlength: 5000
+              file:
+                type: files
+                label: Image
+                multiple: false
+                max: 1
+                when:
+                  type: image
+                query: page.files.filterBy('template', 'project-image-file')
+                uploads:
+                  template: project-image-file
+                help: Upload an image here or choose one already attached to this project.
+
+  - width: 1/3
+    sections:
+      meta:
+        type: fields
+        fields:
+          date: fields/post-date
+          sortkey:
+            type: hidden
+          requestId:
+            type: hidden
+          size:
+            type: select
+            label: Tile size
+            default: m
+            options:
+              s: Small
+              m: Medium
+              l: Large
+      media:
+        type: files
+        label: Project images
+        template: project-image-file
+        layout: cards

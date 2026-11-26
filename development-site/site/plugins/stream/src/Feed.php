@@ -52,6 +52,49 @@ final class Feed
         $cursorNum = self::parseCursor($cursor);
         $limit     = $this->perPage;
 
+        $rows = FeedIndex::read();
+
+        if ($rows === null) {
+            $rows = FeedIndex::rebuild();
+        }
+
+        if (is_array($rows) && $rows !== []) {
+            $collected = [];
+
+            foreach ($rows as $row) {
+                $num = (int) ($row['num'] ?? 0);
+
+                if ($cursorNum !== null && $num >= $cursorNum) {
+                    continue;
+                }
+
+                $post = page((string) ($row['id'] ?? ''));
+
+                if ($post === null || $post->isListed() === false) {
+                    continue;
+                }
+
+                $collected[] = $post;
+
+                if (count($collected) > $limit) {
+                    break;
+                }
+            }
+
+            $hasMore = count($collected) > $limit;
+
+            if ($hasMore === true) {
+                array_pop($collected);
+            }
+
+            $last = end($collected) ?: null;
+
+            return [
+                'posts'      => new Pages($collected),
+                'nextCursor' => $hasMore && $last ? (string) $last->num() : null,
+            ];
+        }
+
         // Collect one more than needed: its existence is what tells us
         // whether there is another page, without a second count query.
         $collected = [];
